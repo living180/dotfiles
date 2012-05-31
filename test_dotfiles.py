@@ -67,7 +67,7 @@ class DotfilesTestCase(unittest.TestCase):
 
         dotfiles = core.Dotfiles(
                 homedir=self.homedir, repository=self.repository,
-                prefix='', ignore=[], force=True, externals={})
+                prefix='', ignore=[], externals={})
 
         dotfiles.sync()
 

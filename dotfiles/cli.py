@@ -23,7 +23,6 @@ settings = {
         'prefix': None,
         'homedir': None,
         'repository': None,
-        'config_file': None,
         'ignore': set(['.dotfilesrc']),
         'externals': dict()}
 
@@ -210,10 +209,9 @@ def main():
     (cli_opts, args) = parse_args()
 
     settings['homedir'] = realpath(cli_opts.homedir or defaults['homedir'])
-    settings['config_file'] = realpath(cli_opts.config_file or
-            defaults['config_file'])
 
-    config_opts = parse_config(settings['config_file'])
+    config_opts = parse_config(
+            realpath(cli_opts.config_file or defaults['config_file']))
 
     settings['repository'] = realpath(cli_opts.repository or
             config_opts['repository'] or defaults['repository'])
