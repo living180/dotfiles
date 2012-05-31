@@ -11,6 +11,7 @@ import os
 import shutil
 import fnmatch
 import sys
+import warnings
 
 
 __version__ = '0.5.3'
@@ -90,6 +91,8 @@ class Dotfiles(object):
         for k, v in kwargs.items():
             if k in self.__attrs__:
                 setattr(self, k, v)
+            else:
+                warnings.warn("unknown keyword argument '%s'" % k)
 
         self._load()
 
