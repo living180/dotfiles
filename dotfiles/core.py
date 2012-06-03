@@ -161,8 +161,7 @@ class Dotfiles(object):
         if os.path.exists(target):
             raise ValueError('Target already exists: %s' % (target))
 
-        shutil.copytree(self.repository, target)
-        shutil.rmtree(self.repository)
+        shutil.move(self.repository, target)
 
         self.repository = target
 
