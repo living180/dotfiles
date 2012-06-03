@@ -35,9 +35,10 @@ class Dotfile(object):
             self.status = 'unsynced'
 
     def sync(self, force):
-        if self.status == 'missing':
-            os.symlink(self.target, self.name)
-        elif self.status == 'unsynced':
+        if self.status == '':
+            # already synced - nothing to do
+            return
+        if self.status == 'unsynced':
             if not force:
                 print("Skipping \"%s\", use --force to override"
                         % self.basename)
@@ -46,7 +47,8 @@ class Dotfile(object):
                 shutil.rmtree(self.name)
             else:
                 os.remove(self.name)
-            os.symlink(self.target, self.name)
+        os.symlink(self.target, self.name)
+        self.status = ''
 
     def add(self):
         if self.status == 'missing':
