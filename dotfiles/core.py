@@ -161,9 +161,16 @@ class Dotfiles(object):
         if os.path.exists(target):
             raise ValueError('Target already exists: %s' % (target))
 
+        old_statuses = dict((dotfile.name, dotfile.status)
+                            for dotfile in self.dotfiles)
+
         shutil.move(self.repository, target)
 
         self.repository = target
 
         self._load()
-        self.sync(force=True)
+
+        for dotfile in self.dotfiles:
+            if old_statuses[dotfile.name] == '' \
+                    and dotfile.status == 'unsynced':
+                dotfile.sync(force=True)
