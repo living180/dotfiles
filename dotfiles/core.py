@@ -70,6 +70,7 @@ class Dotfile(object):
             return
         shutil.move(self.name, self.target)
         symlink(self.target, self.name)
+        self.status = ''
 
     def remove(self):
         if self.status != '':
@@ -77,6 +78,7 @@ class Dotfile(object):
             return
         os.remove(self.name)
         shutil.move(self.target, self.name)
+        self.status == 'unsynced'
 
     def __str__(self):
         return '%-18s %-s' % (self.basename, self.status)
@@ -162,6 +164,7 @@ class Dotfiles(object):
                 getattr(Dotfile(file, self._fqpn(file), self.homedir), action)()
             else:
                 print("Skipping \"%s\", not a dotfile" % file)
+        self._load()
 
     def move(self, target):
         """Move the repository to another location."""
