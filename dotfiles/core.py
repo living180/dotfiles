@@ -19,6 +19,13 @@ __author__ = 'Jon Bernard'
 __license__ = 'ISC'
 
 
+def delete(path):
+    if os.path.isdir(path) and not os.path.islink(path):
+        shutil.rmtree(path)
+    else:
+        os.remove(path)
+
+
 class Dotfile(object):
 
     def __init__(self, name, target, home):
@@ -34,19 +41,23 @@ class Dotfile(object):
         elif os.path.realpath(self.name) != self.target:
             self.status = 'unsynced'
 
-    def sync(self, force):
+    def sync(self, handle_existing):
+        if handle_existing not in ['skip', 'overwrite', 're-add']:
+            raise ValueError(
+                    'unknown value for handle_exisiting: %s' % handle_existing)
         if self.status == '':
             # already synced - nothing to do
             return
         if self.status == 'unsynced':
-            if not force:
-                print("Skipping \"%s\", use --force to override"
+            if handle_existing == 'skip':
+                print("Skipping \"%s\", use --force or --re-add to override"
                         % self.basename)
                 return
-            if os.path.isdir(self.name) and not os.path.islink(self.name):
-                shutil.rmtree(self.name)
+            if handle_existing == 're-add':
+                delete(self.target)
+                shutil.move(self.name, self.target)
             else:
-                os.remove(self.name)
+                delete(self.name)
         os.symlink(self.target, self.name)
         self.status = ''
 
@@ -128,13 +139,13 @@ class Dotfiles(object):
 
         self.list(verbose=False)
 
-    def sync(self, force=False):
+    def sync(self, handle_existing='skip'):
 
         """Synchronize this repository, creating and updating the necessary
         symbolic links."""
 
         for dotfile in self.dotfiles:
-            dotfile.sync(force)
+            dotfile.sync(handle_existing)
 
     def add(self, files):
         """Add dotfile(s) to the repository."""
@@ -173,4 +184,4 @@ class Dotfiles(object):
         for dotfile in self.dotfiles:
             if old_statuses[dotfile.name] == '' \
                     and dotfile.status == 'unsynced':
-                dotfile.sync(force=True)
+                dotfile.sync(handle_existing='overwrite')
