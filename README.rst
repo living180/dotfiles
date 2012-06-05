@@ -31,7 +31,7 @@ Interface
 
 ``-s, --sync``
     Update dotfile symlinks. You can overwrite colliding files with ``-f`` or
-    ``--force``.
+    ``--force``, or replace the repository version(s) with ``--re-add``.
 
 ``-m, --move``
     Move dotfiles repository to another location.

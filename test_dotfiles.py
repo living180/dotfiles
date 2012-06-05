@@ -61,7 +61,7 @@ class DotfilesTestCase(unittest.TestCase):
                 homedir=self.homedir, repository=self.repository,
                 prefix='', ignore=[], externals=externals)
 
-        dotfiles.sync(force=True)
+        dotfiles.sync(handle_existing='overwrite')
 
         self.assertPathEqual(
                 os.path.join(self.homedir, '.lastpass'),
@@ -120,7 +120,7 @@ class DotfilesTestCase(unittest.TestCase):
                 homedir=self.homedir, repository=self.repository,
                 prefix='', ignore=[], externals={})
 
-        dotfiles.sync(force=True)
+        dotfiles.sync(handle_existing='overwrite')
 
         # The symlink should now point to the directory in the repository.
         self.assertPathEqual(
