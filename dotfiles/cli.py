@@ -59,9 +59,15 @@ def add_global_flags(parser):
             action="store_true", dest="show_version", default=False,
             help="show version number and exit")
 
+    parser.set_defaults(handle_existing="skip")
+
     parser.add_option("-f", "--force",
-            action="store_true", dest="force", default=False,
-            help="overwrite colliding dotfiles (use with --sync)")
+            action="store_const", dest="handle_existing", const="overwrite",
+            help="when syncing, overwrite existing dotfiles")
+
+    parser.add_option("--re-add",
+            action="store_const", dest="handle_existing", const="re-add",
+            help="when syncing, re-copy existing dotfiles into the repository")
 
     parser.add_option("-R", "--repo",
             type="string", dest="repository",
@@ -164,13 +170,13 @@ def parse_config(config_file):
     return opts
 
 
-def dispatch(dotfiles, action, force, args):
+def dispatch(dotfiles, action, handle_existing, args):
     if action in ['list', 'check']:
         getattr(dotfiles, action)()
     elif action in ['add', 'remove']:
         getattr(dotfiles, action)(args)
     elif action == 'sync':
-        dotfiles.sync(force)
+        dotfiles.sync(handle_existing)
     elif action == 'move':
         if len(args) > 1:
             print("Error: Move cannot handle multiple targets.")
@@ -237,4 +243,4 @@ def main():
 
     dotfiles = core.Dotfiles(**settings)
 
-    dispatch(dotfiles, cli_opts.action, cli_opts.force, args)
+    dispatch(dotfiles, cli_opts.action, cli_opts.handle_existing, args)
